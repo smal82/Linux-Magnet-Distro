@@ -167,27 +167,6 @@ Una volta che Node.js e npm sono installati, segui questi passaggi per avviare L
     ```
     Questo comando avvierà l'applicazione Electron.
 
-## 📦 Packaging (per creare eseguibili)
-
-Se desideri creare un eseguibile per distribuire l'applicazione, puoi utilizzare `electron-builder`. Assicurati di averlo installato come `devDependency` (dovrebbe essere già presente se hai seguito i passaggi di installazione delle dipendenze).
-
-Esegui i seguenti comandi nel tuo terminale:
-
-* **Per Windows:**
-    ```bash
-    npm run build --win
-    ```
-* **Per macOS:**
-    ```bash
-    npm run build --mac
-    ```
-* **Per Linux:**
-    ```bash
-    npm run build --linux
-    ```
-
-I file eseguibili verranno creati nella cartella `dist`.
-
 ## 📄 Licenza
 
 Questo progetto è rilasciato sotto la **Licenza MIT**.
