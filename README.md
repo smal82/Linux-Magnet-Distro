@@ -1,4 +1,4 @@
-# 🚀 Linux Magnet - Il Tuo Lettore di Feed con Superpoteri Magnet! 🧲
+# 🚀 Linux Magnet - Il lettore di Feed con Superpoteri Magnet! 🧲
 
 [![Licenza MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Electron](https://img.shields.io/badge/Electron-%5E28.2.3-blueviolet.svg)](https://www.electronjs.org/)
