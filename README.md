@@ -138,7 +138,7 @@ Apri il **Terminale** e usa il gestore di pacchetti della tua distribuzione:
 Verifica l'installazione con:
 ```bash
 git --version
-
+  ```
 
 ### ⚙️ Installazione dell'Applicazione
 
