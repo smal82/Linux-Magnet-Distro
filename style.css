@@ -1,0 +1,73 @@
+body {
+  font-family: 'Roboto', sans-serif; /* Usa il font importato */
+  margin: 0; /* Rimuovi il margine predefinito del body */
+  padding: 20px; /* Aggiungi un po' di padding interno */
+  background-color: #f4f4f4; /* Sfondo chiaro e moderno */
+  color: #333; /* Testo scuro per contrasto */
+  line-height: 1.6; /* Migliora la leggibilità */
+}
+
+h1 {
+	font-family: 'Roboto';
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50; /* Colore scuro e moderno per il titolo */
+}
+
+#feed-container {
+  margin-bottom: 20px;
+}
+
+.feed-item {
+  background-color: #fff; /* Sfondo bianco per gli elementi */
+  border-radius: 8px; /* Bordi arrotondati per un aspetto moderno */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombra leggera */
+  padding: 20px;
+  margin-bottom: 15px;
+  border-left: 5px solid #3498db; /* Bordo colorato a sinistra per evidenziare */
+}
+
+.feed-item h2 {
+  margin-top: 0;
+  color: #3498db; /* Colore del titolo dell'elemento */
+}
+
+.date {
+  color: #777;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.excerpt {
+  color: #555;
+  font-size: 0.95em;
+  margin-bottom: 15px;
+}
+
+.feed-item a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.feed-item a:hover {
+  text-decoration: underline;
+}
+
+#refresh-button {
+  display: block; /* Rendi il pulsante un elemento di blocco */
+  width: 150px; /* Larghezza fissa */
+  margin: 20px auto; /* Centra il pulsante */
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease; /* Transizione per l'hover */
+}
+
+#refresh-button:hover {
+  background-color: #2980b9;
+}

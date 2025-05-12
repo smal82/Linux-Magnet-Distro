@@ -1,0 +1,45 @@
+{
+  "name": "feed-reader",
+  "version": "1.0.0",
+  "description": "Un lettore di feed con supporto magnet link",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "smal",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.3",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "dompurify": "^3.2.5",
+    "rss-parser": "^3.13.0"
+  },
+  "build": {
+    "appId": "com.smal.linuxmagnet",
+    "productName": "Linux Magnet",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "package.json",
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "style.css",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "icon": "favicon.icns"
+    },
+    "win": {
+      "icon": "favicon.ico"
+    },
+    "linux": {
+      "icon": "favicon.png"
+    }
+  }
+}
