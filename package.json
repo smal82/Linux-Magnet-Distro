@@ -4,7 +4,11 @@
   "description": "Un lettore di feed con supporto magnet link",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build": "npm run build:win && npm run build:mac && npm run build:linux"
   },
   "author": "smal",
   "license": "MIT",
