@@ -85,6 +85,61 @@ L'installazione su Linux può variare a seconda della distribuzione. Ecco alcuni
 
 Verifica l'installazione aprendo il terminale e digitando `node -v` e `npm -v`.
 
+#### 📥 Installazione di Git
+
+Se non hai Git installato sul tuo sistema, segui le istruzioni appropriate per il tuo sistema operativo:
+
+##### ⚙️ Windows
+
+1.  Vai sul sito ufficiale di Git per Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+2.  Scarica l'installer e segui le istruzioni. Assicurati di selezionare l'opzione per aggiungere Git al tuo PATH.
+3.  Apri il **Prompt dei comandi** e verifica l'installazione con:
+    ```bash
+    git --version
+    ```
+
+##### 🍎 macOS
+
+**Metodo 1: Tramite l'installer dal sito ufficiale:**
+
+1.  Vai sul sito ufficiale di Git: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+2.  Scarica l'installer e segui le istruzioni.
+
+**Metodo 2: Tramite Homebrew (consigliato):**
+
+1.  Se non hai Homebrew, installalo da: [https://brew.sh/](https://brew.sh/)
+2.  Apri il **Terminale** e installa Git:
+    ```bash
+    brew install git
+    ```
+3.  Verifica l'installazione:
+    ```bash
+    git --version
+    ```
+
+##### 🐧 Linux
+
+Apri il **Terminale** e usa il gestore di pacchetti della tua distribuzione:
+
+* **Debian/Ubuntu:**
+    ```bash
+    sudo apt update
+    sudo apt install git
+    ```
+* **Fedora/CentOS:**
+    ```bash
+    sudo dnf install git
+    ```
+* **Arch Linux:**
+    ```bash
+    sudo pacman -S git
+    ```
+
+Verifica l'installazione con:
+```bash
+git --version
+
+
 ### ⚙️ Installazione dell'Applicazione
 
 Una volta che Node.js e npm sono installati, segui questi passaggi per avviare Linux Magnet:
