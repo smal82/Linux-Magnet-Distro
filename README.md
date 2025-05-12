@@ -1,9 +1,13 @@
 # 🚀 Linux Magnet - Il lettore di Feed con Superpoteri Magnetici! 🧲
 
-[![Licenza MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Electron](https://img.shields.io/badge/Electron-%5E28.2.3-blueviolet.svg)](https://www.electronjs.org/)
-[![Author](https://img.shields.io/badge/Author-smal82-brightgreen.svg)](https://github.com/smal82)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.x-green.svg)](https://nodejs.org/)
+![Repo Size](https://img.shields.io/github/repo-size/smal82/Linux-Magnet-Distro)
+![Language](https://img.shields.io/badge/language-JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![UI](https://img.shields.io/badge/UI-HTML/CSS-orange)
+![Windows Support](https://img.shields.io/badge/Windows-✔️-blue?logo=windows)
+![macOS Support](https://img.shields.io/badge/macOS-✔️-lightgrey?logo=apple)
+![Linux Support](https://img.shields.io/badge/Linux-✔️-yellow?logo=linux)
 
 **Linux Magnet** è un'applicazione desktop cross-platform, creata con Electron, che ti permette di rimanere aggiornato sul feed di Linux Magnet con una marcia in più! 🔩 Grazie al supporto integrato per i **magnet link**, potrai scoprire e scaricare le distro in un modo completamente nuovo.
 
