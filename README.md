@@ -12,7 +12,7 @@
 
 **Linux Magnet** è un'applicazione desktop cross-platform, creata con Electron, che ti permette di rimanere aggiornato sul feed di Linux Magnet con una marcia in più! 🔩 Grazie al supporto integrato per i **magnet link**, potrai scoprire e scaricare le distro in un modo completamente nuovo.
 
-![L'applicazione](screenshot.png)
+![L'applicazione](screen-1-1-0.png)
 
 ## ✨ Caratteristiche Principali
 
