@@ -8,7 +8,7 @@ body {
 }
 
 h1 {
-	font-family: 'Roboto';
+  font-family: 'Roboto';
   text-align: center;
   margin-bottom: 30px;
   color: #2c3e50; /* Colore scuro e moderno per il titolo */
@@ -44,15 +44,19 @@ h1 {
   margin-bottom: 15px;
 }
 
+/* Regole generali per i link all'interno di feed-item */
 .feed-item a {
   color: #3498db;
-  text-decoration: none;
+  text-decoration: none; /* Rimuove la sottolineatura di default per tutti i link */
   font-weight: bold;
 }
 
-.feed-item a:hover {
-  text-decoration: underline;
+/* Mantiene la sottolineatura solo per il link "Leggi di più" al passaggio del mouse */
+.feed-item a.read-more-link:hover {
+  text-decoration: none;
 }
+
+/* Le altre regole di hover per .feed-item a sono state rimosse o sovrascritte */
 
 #refresh-button {
   display: block; /* Rendi il pulsante un elemento di blocco */
