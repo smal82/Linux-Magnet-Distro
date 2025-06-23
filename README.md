@@ -6,7 +6,7 @@
 ![Language](https://img.shields.io/badge/language-JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![UI](https://img.shields.io/badge/UI-HTML/CSS-orange)
 ![Windows Support](https://img.shields.io/badge/Windows-✔️-blue?logo=windows)
-[![Download Windows](https://img.shields.io/badge/Download-Windows_1.0.0-blue.svg)](https://github.com/smal82/Linux-Magnet-Distro/releases/download/windows/Linux.Magnet.Setup.1.0.0.exe)
+[![Download Windows](https://img.shields.io/badge/Download-Windows_1.2.0-blue.svg)](https://github.com/smal82/Linux-Magnet-Distro/releases/download/1.2.0/Linux.Magnet.Setup.1.2.0.exe)
 ![macOS Support](https://img.shields.io/badge/macOS-✔️-lightgrey?logo=apple)
 ![Linux Support](https://img.shields.io/badge/Linux-✔️-yellow?logo=linux)
 
