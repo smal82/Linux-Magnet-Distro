@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
@@ -6,7 +6,7 @@ const { spawn, execFile } = require('child_process');
 const os = require('os');
 const url = require('url');
 const crypto = require('crypto');
-const xml2js = require('xml2js'); // Importa xml2js
+const xml2js = require('xml2js');
 
 let mainWindow;
 let tempFilePath;
@@ -30,8 +30,19 @@ function getLocalVersion() {
 
 // Funzione per ottenere la versione dal package.json della repository GitHub
 function getRemoteVersion(callback) {
-    const url = 'https://raw.githubusercontent.com/smal82/Linux-Magnet-Distro/main/package.json';
-    https.get(url, (res) => {
+    const remoteUrl = 'https://raw.githubusercontent.com/smal82/Linux-Magnet-Distro/main/package.json';
+    const parsedUrl = new URL(remoteUrl);
+
+    const options = {
+        hostname: parsedUrl.hostname,
+        path: parsedUrl.pathname + parsedUrl.search,
+        method: 'GET',
+        headers: {
+            'User-Agent': 'ElectronApp-LinuxMagnetDistro/1.0 (https://github.com/smal82/Linux-Magnet-Distro)' // User-Agent personalizzato per la richiesta remota
+        }
+    };
+
+    https.get(options, (res) => {
         let data = '';
         res.on('data', (chunk) => {
             data += chunk;
@@ -52,20 +63,37 @@ function getRemoteVersion(callback) {
     });
 }
 
-function checkVersionAndPrompt() {
+// Modificata per accettare un parametro che indica se è un controllo manuale
+function checkVersionAndPrompt(isManualCheck = false) {
     const localVersion = getLocalVersion();
     if (!localVersion) {
+        if (isManualCheck) {
+            dialog.showMessageBox(mainWindow, {
+                type: 'error',
+                title: 'Errore Versione Locale',
+                message: 'Impossibile determinare la versione locale dell\'applicazione.',
+                buttons: ['OK']
+            });
+        }
         return;
     }
 
     getRemoteVersion((error, remoteVersion) => {
         if (error) {
             console.error("Impossibile controllare aggiornamenti", error);
+            if (isManualCheck) {
+                dialog.showMessageBox(mainWindow, {
+                    type: 'error',
+                    title: 'Errore Aggiornamento',
+                    message: 'Impossibile controllare la disponibilità di aggiornamenti. Verifica la tua connessione.',
+                    buttons: ['OK']
+                });
+            }
             return;
         }
 
         if (remoteVersion && remoteVersion > localVersion) {
-            dialog.showMessageBox({
+            dialog.showMessageBox(mainWindow, {
                 type: 'info',
                 title: 'Aggiornamento Disponibile',
                 message: `È disponibile una nuova versione (${remoteVersion}). Vuoi scaricarla?`,
@@ -75,9 +103,111 @@ function checkVersionAndPrompt() {
                     shell.openExternal('https://github.com/smal82/Linux-Magnet-Distro/releases');
                 }
             });
+        } else if (isManualCheck) { // Mostra questo alert solo se è un controllo manuale
+            dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'Aggiornamento',
+                message: 'La tua applicazione è già aggiornata all\'ultima versione.',
+                buttons: ['OK']
+            });
         }
     });
 }
+
+// Funzione per creare e modificare il menu dell'applicazione
+function createApplicationMenu() {
+    const localVersion = getLocalVersion();
+
+    // Ottieni il template del menu predefinito di Electron.
+    // Questo include le voci standard come File, Edit, View, Window, Help (o i loro equivalenti localizzati).
+    // È più sicuro partire da questo template e modificarlo.
+    const defaultTemplate = Menu.getApplicationMenu() ? Menu.getApplicationMenu().items : [];
+
+    // Crea un nuovo template di menu basato su quello predefinito
+    const customTemplate = defaultTemplate.map(item => {
+        // Se l'elemento è il menu 'Help' o 'Aiuto', lo modifichiamo
+        if (item.role === 'help' || item.label === 'Help' || item.label === 'Aiuto') {
+            return {
+                label: item.label,
+                submenu: [
+                    ...item.submenu.items.map(subItem => ({ ...subItem.submenu ? { submenu: subItem.submenu.items } : {}, ...subItem })), // Copia le voci esistenti del sottomenu
+                    { type: 'separator' }, // Aggiungi un separatore
+                    {
+                        label: 'Informazioni su Linux Magnet Distro',
+                        click: () => {
+                            dialog.showMessageBox(mainWindow, {
+                                type: 'info',
+                                title: 'Informazioni',
+                                message: `Linux Magnet Distro\nVersione: ${localVersion || 'Sconosciuta'}\n\nUn'applicazione per trovare e scaricare distribuzioni Linux via magnet link.`,
+                                buttons: ['OK']
+                            });
+                        }
+                    },
+                    {
+                        label: 'Controlla Aggiornamenti',
+                        click: () => {
+                            checkVersionAndPrompt(true); // Passa true per indicare un controllo manuale
+                        }
+                    },
+                    {
+                        label: 'GitHub Repository',
+                        click: () => {
+                            shell.openExternal('https://github.com/smal82/Linux-Magnet-Distro');
+                        }
+                    }
+                ]
+            };
+        }
+        // Per tutti gli altri elementi del menu, restituiscili come sono
+        // Ricostruisci il sottomenu se esiste per evitare problemi di riferimento diretto
+        if (item.submenu) {
+            return {
+                label: item.label,
+                role: item.role,
+                submenu: item.submenu.items.map(subItem => ({ ...subItem.submenu ? { submenu: subItem.submenu.items } : {}, ...subItem }))
+            };
+        }
+        return { ...item }; // Copia l'elemento per evitare modifiche dirette al template originale
+    });
+
+    // Se non c'è un menu 'Help' predefinito (es. su Linux senza global menu o per ruoli specifici), aggiungine uno.
+    const hasHelpMenu = customTemplate.some(item => item.role === 'help' || item.label === 'Help' || item.label === 'Aiuto');
+    if (!hasHelpMenu) {
+        customTemplate.push({
+            label: 'Aiuto',
+            submenu: [
+                {
+                    label: 'Informazioni su Linux Magnet Distro',
+                    click: () => {
+                        dialog.showMessageBox(mainWindow, {
+                            type: 'info',
+                            title: 'Informazioni',
+                            message: `Linux Magnet Distro\nVersione: ${localVersion || 'Sconosciuta'}\n\nUn'applicazione per trovare e scaricare distribuzioni Linux via magnet link.`,
+                            buttons: ['OK']
+                        });
+                    }
+                },
+                {
+                    label: 'Controlla Aggiornamenti',
+                    click: () => {
+                        checkVersionAndPrompt(true);
+                    }
+                },
+                { type: 'separator' },
+                {
+                    label: 'GitHub Repository',
+                    click: () => {
+                        shell.openExternal('https://github.com/smal82/Linux-Magnet-Distro');
+                    }
+                }
+            ]
+        });
+    }
+
+    const menu = Menu.buildFromTemplate(customTemplate);
+    Menu.setApplicationMenu(menu);
+}
+
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -98,7 +228,9 @@ function createWindow() {
     });
 
     mainWindow.webContents.on('did-finish-load', () => {
-        checkVersionAndPrompt();
+        // La creazione del menu deve avvenire dopo che la finestra è pronta, o altrimenti al `app.whenReady()`
+        createApplicationMenu(); // Chiama la funzione per creare/modificare il menu
+        checkVersionAndPrompt(false); // Avvia il controllo automatico all'avvio (non manuale)
     });
 }
 
@@ -112,28 +244,49 @@ app.on('activate', function () {
     if (mainWindow === null) createWindow();
 });
 
-// Funzione per troncare il testo (copiata da renderer.js per uso qui)
+// Funzione per troncare il testo
 function truncateText(text, maxLength) {
-    if (!text || text.length <= maxLength) {
+    if (typeof text !== 'string') {
+        return '';
+    }
+    if (text.length <= maxLength) {
         return text;
     }
-    let truncated = text.substring(0, maxLength);
-    truncated = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(' ')));
+    const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "").replace(/&[^;]+;/g, "");
+    if (cleanText.length <= maxLength) {
+        return cleanText;
+    }
+    let truncated = cleanText.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+    if (lastSpaceIndex > (maxLength * 0.75)) {
+        truncated = truncated.substring(0, lastSpaceIndex);
+    }
     return truncated + '...';
 }
 
 // Funzione per rimuovere i BBCode [magnet=...]...[/magnet] dal testo
 function cleanMagnetBBCode(text) {
-    if (!text) return "";
-    const regex = /\[magnet=([^\]]*)\](.*?)\[\/magnet\]/gs;
+    if (typeof text !== 'string') return "";
+    const regex = /\[magnet=([^\]]*)\](.*?)\[\/magnet\]/gis;
     return text.replace(regex, '');
 }
 
 ipcMain.handle('fetch-feed', async () => {
     try {
         const feedUrl = 'https://smal82.netsons.org/feed/distros/';
+        const parsedFeedUrl = new URL(feedUrl);
+
+        const options = {
+            hostname: parsedFeedUrl.hostname,
+            path: parsedFeedUrl.pathname + parsedFeedUrl.search,
+            method: 'GET',
+            headers: {
+                'User-Agent': 'ElectronApp-LinuxMagnetDistro/1.0 (https://github.com/smal82/Linux-Magnet-Distro)'
+            }
+        };
+
         const response = await new Promise((resolve, reject) => {
-            https.get(feedUrl, (res) => {
+            https.get(options, (res) => {
                 let data = '';
                 res.on('data', (chunk) => data += chunk);
                 res.on('end', () => resolve(data));
@@ -144,35 +297,30 @@ ipcMain.handle('fetch-feed', async () => {
         const parser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: false, mergeAttrs: true });
         const result = await parser.parseStringPromise(response);
 
-        const items = result.rss.channel.item;
-        if (!Array.isArray(items)) { // Assicura che items sia un array anche se c'è un solo item
+        let items = result.rss.channel.item;
+        if (!Array.isArray(items)) {
             items = [items];
         }
 
         const processedItems = items.slice(0, 20).map(item => {
             let excerptContent = '';
-            // Tenta di prendere il testo da description
-            if (item.description && item.description._) { // Se description è un oggetto con _ (CDATA)
+            if (item.description && item.description._) {
                 excerptContent = item.description._;
-            } else if (typeof item.description === 'string') { // Se description è una stringa diretta
+            } else if (typeof item.description === 'string') {
                 excerptContent = item.description;
             }
 
-            // Se description è vuoto o non significativo, usa content:encoded e tronca
-            if (!excerptContent || excerptContent.trim().length < 10) { // Considera "vuoto" anche se molto corto
+            if (!excerptContent || excerptContent.trim().length < 10) {
                 if (item['content:encoded'] && item['content:encoded']._) {
                     excerptContent = item['content:encoded']._;
                 } else if (typeof item['content:encoded'] === 'string') {
                     excerptContent = item['content:encoded'];
                 }
-                // Tronca il contenuto di content:encoded per l'excerpt
-                excerptContent = truncateText(excerptContent, 250); // Lunghezza desiderata per l'excerpt
+                excerptContent = truncateText(excerptContent, 250);
             }
 
-            // Pulisci l'excerpt dai BBCode magnet
             excerptContent = cleanMagnetBBCode(excerptContent);
 
-            // Estrai l'enclosure
             let enclosure = null;
             if (item.enclosure && item.enclosure.url) {
                 enclosure = {
