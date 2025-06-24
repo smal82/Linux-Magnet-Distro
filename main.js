@@ -1,10 +1,11 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const { spawn, execFile } = require('child_process');
 const os = require('os');
-const url = require('url');
+const url = require('url'); 
+
 const crypto = require('crypto');
 const xml2js = require('xml2js');
 
@@ -14,6 +15,15 @@ let downloadProgressDialog;
 let installerAttempts = 0;
 let tempDir;
 let expectedChecksum = null;
+
+// Variabile per tenere traccia degli ID dei post già notificati per evitare duplicati
+// Questo Set verrà popolato con i post "esistenti" all'avvio iniziale.
+let notifiedPostIds = new Set(); 
+
+// Variabile di stato per la prima esecuzione del fetch del feed dopo l'avvio
+// Sarà true alla prima chiamata di fetchAndNotifyNewPosts per la popolazione iniziale
+// e poi false per le chiamate successive (quelle con notifica).
+let isInitialFetchComplete = false; 
 
 // Funzione per ottenere la versione dal package.json locale
 function getLocalVersion() {
@@ -31,7 +41,7 @@ function getLocalVersion() {
 // Funzione per ottenere la versione dal package.json della repository GitHub
 function getRemoteVersion(callback) {
     const remoteUrl = 'https://raw.githubusercontent.com/smal82/Linux-Magnet-Distro/main/package.json';
-    const parsedUrl = new URL(remoteUrl);
+    const parsedUrl = new URL(remoteUrl); 
 
     const options = {
         hostname: parsedUrl.hostname,
@@ -119,8 +129,6 @@ function createApplicationMenu() {
     const localVersion = getLocalVersion();
 
     // Ottieni il template del menu predefinito di Electron.
-    // Questo include le voci standard come File, Edit, View, Window, Help (o i loro equivalenti localizzati).
-    // È più sicuro partire da questo template e modificarlo.
     const defaultTemplate = Menu.getApplicationMenu() ? Menu.getApplicationMenu().items : [];
 
     // Crea un nuovo template di menu basato su quello predefinito
@@ -130,7 +138,12 @@ function createApplicationMenu() {
             return {
                 label: item.label,
                 submenu: [
-                    ...item.submenu.items.map(subItem => ({ ...subItem.submenu ? { submenu: subItem.submenu.items } : {}, ...subItem })), // Copia le voci esistenti del sottomenu
+                    // Copia le voci esistenti del sottomenu 'Help'
+                    ...(item.submenu && item.submenu.items ? item.submenu.items.map(subItem => ({
+                        ...subItem, // Copia le proprietà base
+                        // Ricorsivamente gestisci i sottomenu nidificati se esistono
+                        ...(subItem.submenu && subItem.submenu.items ? { submenu: subItem.submenu.items.map(nestedSubItem => ({ ...nestedSubItem })) } : {})
+                    })) : []),
                     { type: 'separator' }, // Aggiungi un separatore
                     {
                         label: 'Informazioni su Linux Magnet Distro',
@@ -160,11 +173,14 @@ function createApplicationMenu() {
         }
         // Per tutti gli altri elementi del menu, restituiscili come sono
         // Ricostruisci il sottomenu se esiste per evitare problemi di riferimento diretto
-        if (item.submenu) {
+        if (item.submenu && item.submenu.items) {
             return {
                 label: item.label,
                 role: item.role,
-                submenu: item.submenu.items.map(subItem => ({ ...subItem.submenu ? { submenu: subItem.submenu.items } : {}, ...subItem }))
+                submenu: item.submenu.items.map(subItem => ({
+                    ...subItem,
+                    ...(subItem.submenu && subItem.submenu.items ? { submenu: subItem.submenu.items.map(nestedSubItem => ({ ...nestedSubItem })) } : {})
+                }))
             };
         }
         return { ...item }; // Copia l'elemento per evitare modifiche dirette al template originale
@@ -227,10 +243,28 @@ function createWindow() {
         mainWindow = null;
     });
 
-    mainWindow.webContents.on('did-finish-load', () => {
-        // La creazione del menu deve avvenire dopo che la finestra è pronta, o altrimenti al `app.whenReady()`
+    mainWindow.webContents.on('did-finish-load', async () => {
+        // --- Inizio della Logica per Popolazione Iniziale e Polling ---
+        // Al caricamento, esegui il fetch iniziale del feed e usalo SOLO per popolare notifiedPostIds.
+        console.log('Esecuzione del fetch iniziale per popolare gli ID dei post già esistenti...');
+        try {
+            const initialPosts = await fetchFeedContent(); // Chiamiamo la funzione che solo fa il fetch
+            initialPosts.forEach(post => notifiedPostIds.add(post.link));
+            console.log(`Popolati ${notifiedPostIds.size} ID di post esistenti all'avvio.`);
+            isInitialFetchComplete = true; // Marca il fetch iniziale come completato
+        } catch (error) {
+            console.error("Errore durante il fetch iniziale per la popolazione:", error);
+        }
+        
         createApplicationMenu(); // Chiama la funzione per creare/modificare il menu
         checkVersionAndPrompt(false); // Avvia il controllo automatico all'avvio (non manuale)
+
+        // Imposta un intervallo per il controllo periodico del feed e notifica i nuovi post
+        setInterval(() => {
+            console.log('Controllo automatico del feed per NUOVI post...');
+            fetchAndNotifyNewPosts(); 
+        }, 15 * 60 * 1000); // Ogni 15 minuti
+        // --- Fine della Logica per Popolazione Iniziale e Polling ---
     });
 }
 
@@ -271,14 +305,15 @@ function cleanMagnetBBCode(text) {
     return text.replace(regex, '');
 }
 
-ipcMain.handle('fetch-feed', async () => {
+// --- Funzione GENERICA per il fetching del feed senza logica di notifica ---
+async function fetchFeedContent() {
     try {
         const feedUrl = 'https://smal82.netsons.org/feed/distros/';
-        const parsedFeedUrl = new URL(feedUrl);
+        const parsedUrl = new URL(feedUrl); 
 
         const options = {
-            hostname: parsedFeedUrl.hostname,
-            path: parsedFeedUrl.pathname + parsedFeedUrl.search,
+            hostname: parsedUrl.hostname,
+            path: parsedUrl.pathname + parsedUrl.search,
             method: 'GET',
             headers: {
                 'User-Agent': 'ElectronApp-LinuxMagnetDistro/1.0 (https://github.com/smal82/Linux-Magnet-Distro)'
@@ -344,4 +379,57 @@ ipcMain.handle('fetch-feed', async () => {
         console.error("Errore nel fetching o parsing del feed:", error);
         return [];
     }
+}
+
+
+// --- Funzione per il fetching del feed e la gestione delle notifiche ---
+async function fetchAndNotifyNewPosts() {
+    try {
+        const processedItems = await fetchFeedContent(); // Ottiene i dati del feed
+
+        // Notifica SOLO i post che NON sono già in notifiedPostIds E se il fetch iniziale è completato
+        // Questo impedisce le notifiche indesiderate all'avvio.
+        const newPosts = processedItems.filter(item => !notifiedPostIds.has(item.link));
+
+        if (newPosts.length > 0 && isInitialFetchComplete) { // Notifica solo se ci sono nuovi post E se l'inizializzazione è finita
+            newPosts.forEach(post => {
+                if (Notification.isSupported()) {
+                    const notification = new Notification({
+                        title: `Nuova Distro: ${post.title}`,
+                        body: post.excerpt,
+                        icon: path.join(__dirname, 'assets', 'favicon.png'),
+                    });
+
+                    notification.on('click', () => {
+                        console.log('Notifica cliccata, aprendo il link:', post.link);
+                        shell.openExternal(post.link);
+                    });
+
+                    notification.show();
+                } else {
+                    console.warn("Le notifiche native non sono supportate sul sistema.");
+                }
+                notifiedPostIds.add(post.link); // Aggiungi l'ID del post all'elenco dei notificati
+            });
+            console.log(`Notificate ${newPosts.length} nuove distro.`);
+        } else if (newPosts.length === 0) {
+            console.log("Nessun nuovo post da notificare.");
+        } else if (!isInitialFetchComplete) {
+            console.log("Fetch in corso o completato, ma notifiche disabilitate per il fetch iniziale.");
+        }
+
+        return processedItems; // Ritorna i dati per chi ha chiamato (es. ipcMain.handle)
+    } catch (error) {
+        console.error("Errore nel fetching o parsing del feed:", error);
+        return [];
+    }
+}
+
+
+// IPC handler per il fetching del feed (usato dal renderer process)
+ipcMain.handle('fetch-feed', async () => {
+    // Quando il renderer chiede il feed, restituisce i dati attuali.
+    // La logica di notifica è ora gestita solo dal polling automatico.
+    // Il renderer si aspetta solo i dati, non le notifiche dirette dalla sua richiesta.
+    return fetchFeedContent(); 
 });
