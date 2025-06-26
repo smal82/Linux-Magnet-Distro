@@ -1,1 +1,164 @@
-prova
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Magnet - Il lettore di Feed con Superpoteri Magnetici!</title>
+    <!-- Caricamento di Tailwind CSS per uno styling rapido e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Sfondo leggermente grigio */
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 9999px; /* Bordi arrotondati */
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #6366f1; /* Viola */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5; /* Viola più scuro al passaggio del mouse */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .btn-secondary {
+            background-color: #e0e7ff; /* Azzurro chiaro */
+            color: #4f46e5; /* Viola */
+        }
+        .btn-secondary:hover {
+            background-color: #c7d2fe; /* Azzurro più scuro al passaggio del mouse */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .feature-card {
+            background-color: white;
+            border-radius: 1rem; /* Bordi arrotondati */
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon {
+            font-size: 2.5rem; /* Dimensione icone */
+            color: #6366f1; /* Colore viola per le icone */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-gray-900 mb-4">
+                🚀 Linux Magnet
+            </h1>
+            <p class="mt-2 text-3xl font-bold text-gray-700">
+                Il lettore di Feed con Superpoteri Magnetici! 🧲
+            </p>
+            <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+                Linux Magnet è un'applicazione desktop cross-platform, creata con Electron, che ti permette di rimanere aggiornato sul feed di Linux Magnet con una marcia in più! Grazie al supporto integrato per i magnet link, potrai scoprire e scaricare le distro in un modo completamente nuovo.
+            </p>
+        </header>
+
+        <main class="w-full container mx-auto">
+            <div class="mb-12 text-center">
+                <img src="https://placehold.co/800x450/E0E7FF/4F46E5?text=Anteprima+App+Linux+Magnet" alt="Anteprima dell'applicazione Linux Magnet" class="rounded-lg shadow-xl mx-auto border-4 border-indigo-200">
+                <p class="mt-4 text-sm text-gray-500">
+                    Sostituisci questa immagine con uno screenshot reale della tua app!
+                </p>
+            </div>
+
+            <section class="mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 text-center mb-8">✨ Caratteristiche Principali</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="feature-card">
+                        <div class="icon mb-4">📰</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Lettura di Feed Semplice ed Elegante</h3>
+                        <p class="text-gray-600">Interfaccia utente pulita e moderna per una lettura confortevole dei feed RSS.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="feature-card">
+                        <div class="icon mb-4">🧲</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Supporto Magnet Link Integrato</h3>
+                        <p class="text-gray-600">Individua i magnet link nei feed e scaricali direttamente dall'app.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="feature-card">
+                        <div class="icon mb-4">🔄</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Aggiornamento Facile</h3>
+                        <p class="text-gray-600">Mantieni i feed sempre aggiornati con un semplice clic sul pulsante di aggiornamento.</p>
+                    </div>
+                    <!-- Feature 4 -->
+                    <div class="feature-card">
+                        <div class="icon mb-4">⚙️</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Cross-Platform</h3>
+                        <p class="text-gray-600">Disponibile per Windows, macOS e Linux, per la massima compatibilità.</p>
+                    </div>
+                    <!-- Feature 5 -->
+                    <div class="feature-card">
+                        <div class="icon mb-4">🏷️</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Informazioni Magnet Utili</h3>
+                        <p class="text-gray-600">Visualizzazione del testo associato al magnet link prima dell'icona per una migliore comprensione.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8">📥 Scarica Linux Magnet</h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    Pronto a potenziare la tua esperienza di lettura dei feed? Scarica Linux Magnet per il tuo sistema operativo!
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="https://github.com/smal82/Linux-Magnet-Distro/releases/download/1.3.0/Linux.Magnet.Setup.1.3.0.exe" class="btn btn-primary">
+                        Scarica per Windows (v1.3.0)
+                    </a>
+                    <a href="https://github.com/smal82/Linux-Magnet-Distro" class="btn btn-secondary">
+                        Visita il Repository GitHub
+                    </a>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">
+                    Per le versioni macOS e Linux, visita il repository GitHub.
+                </p>
+            </section>
+
+            <section class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8">📄 Licenza</h2>
+                <p class="text-lg text-gray-600 mb-4">
+                    Questo progetto è rilasciato sotto la <strong class="text-indigo-600">Licenza MIT</strong>.
+                </p>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    La Licenza MIT è permissiva, consentendo l'uso, la copia, la modifica e la distribuzione del software. Richiede l'inclusione dell'avviso di copyright e della nota di autorizzazione. Il software è fornito "COSÌ COM'È", senza garanzie.
+                </p>
+                <a href="https://github.com/smal82/Linux-Magnet-Distro/blob/main/LICENSE" class="text-indigo-600 hover:underline mt-2 inline-block">
+                    Leggi il testo completo della Licenza MIT
+                </a>
+            </section>
+
+            <section class="text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8">🧑‍💻 Autore</h2>
+                <p class="text-lg text-gray-600 mb-4">
+                    Sviluppato con passione da <a href="https://github.com/smal82" class="text-indigo-600 hover:underline">smal82</a>.
+                </p>
+            </section>
+        </main>
+
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Linux Magnet. Tutti i diritti riservati.</p>
+        </footer>
+    </div>
+</body>
+</html>
