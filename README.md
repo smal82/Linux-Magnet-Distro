@@ -1,6 +1,6 @@
 # 🚀 Linux Magnet - Il lettore di Feed con Superpoteri Magnetici! 🧲
 
-[![Electron](https://img.shields.io/badge/Electron-%5E28.2.3-blueviolet.svg)](https://www.electronjs.org/)
+[![Electron](https://img.shields.io/badge/Electron-%5E38.0.0-blueviolet.svg)](https://www.electronjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.x-green.svg)](https://nodejs.org/)
 ![Repo Size](https://img.shields.io/github/repo-size/smal82/Linux-Magnet-Distro)
 ![Language](https://img.shields.io/badge/language-JavaScript-F7DF1E?logo=javascript&logoColor=black)
