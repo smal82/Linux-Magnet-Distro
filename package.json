@@ -15,7 +15,7 @@
   "homepage": "https://smal82.netsons.org",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^37.1.0",
+    "electron": "^38.3.0",
     "electron-builder": "^26.0.12"
   },
   "dependencies": {
@@ -64,3 +64,4 @@
     ]
   }
 }
+
